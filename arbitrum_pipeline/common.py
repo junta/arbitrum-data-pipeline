@@ -17,10 +17,13 @@ def export_to_file(data: pd.DataFrame, group: str, filename: str) -> None:
     print(f"Data exported to Parquet file: {parquet_file_name}")
 
 
-def request_graphql(url: str, query: str):
+def request_graphql(url: str, query: str, additional_headers: dict = None):
     headers = {
         "Content-Type": "application/json",
     }
+
+    if additional_headers is not None:
+        headers.update(additional_headers)
 
     payload = {"query": query}
 

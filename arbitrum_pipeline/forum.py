@@ -2,15 +2,15 @@ from time import sleep
 import requests
 import pandas as pd
 from arbitrum_pipeline.common import export_to_file
-from dagster import asset
+from dagster import asset, Output
 
 
 forum_base_url = "https://forum.arbitrum.foundation"
 group = "forum"
 
 
-@asset
-def fetch_forum_topics() -> pd.DataFrame:
+@asset(group_name="forum")
+def forum_topics() -> Output[pd.DataFrame]:
     url = forum_base_url + "/latest.json"
     topics = []
     page = 1
@@ -35,11 +35,37 @@ def fetch_forum_topics() -> pd.DataFrame:
     # tags_descriptions is not used, so remove it to avoid error when exporting to Parquet
     df = df.drop(columns=["tags_descriptions"])
     export_to_file(df, group, "topics")
-    return df
+
+    return Output(
+        df,
+        metadata={
+            "Number of records": len(df),
+        },
+    )
 
 
-@asset
-def fetch_forum_users() -> pd.DataFrame:
+@asset(group_name="forum")
+def forum_categories() -> Output[pd.DataFrame]:
+    url = forum_base_url + "/categories.json"
+
+    response = requests.get(url)
+    response.raise_for_status()
+    data = response.json()
+    categories = data.get("category_list", {}).get("categories", [])
+
+    df = pd.DataFrame(categories)
+    export_to_file(df, group, "categories")
+
+    return Output(
+        df,
+        metadata={
+            "Number of records": len(df),
+        },
+    )
+
+
+@asset(group_name="forum")
+def forum_users() -> pd.DataFrame:
     url = forum_base_url + "/directory_items.json"
     users = []
     page = 1
@@ -74,8 +100,8 @@ def fetch_forum_users() -> pd.DataFrame:
     return df
 
 
-@asset
-def fetch_forum_posts() -> pd.DataFrame:
+@asset(group_name="forum")
+def forum_posts() -> pd.DataFrame:
     url = forum_base_url + "/posts.json"
     posts = []
 
