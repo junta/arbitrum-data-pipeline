@@ -15,7 +15,9 @@ group = "tally"
 @asset(group_name=group)
 def tally_proposals(context: AssetExecutionContext) -> Output[pd.DataFrame]:
     additional_headers = {"Api-key": TALLY_API_KEY}
-    response_data = request_graphql(tally_base_url, proposal_query, additional_headers)
+    response_data = request_graphql(
+        tally_base_url, proposal_query, None, additional_headers
+    )
 
     df = pd.DataFrame(response_data.get("governance", {}).get("proposals", []))
     context.log.info(df.head())

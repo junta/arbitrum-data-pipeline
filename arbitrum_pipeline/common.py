@@ -17,7 +17,9 @@ def export_to_file(data: pd.DataFrame, group: str, filename: str) -> None:
     print(f"Data exported to Parquet file: {parquet_file_name}")
 
 
-def request_graphql(url: str, query: str, additional_headers: dict = None):
+def request_graphql(
+    url: str, query: str, variables: dict = None, additional_headers: dict = None
+):
     headers = {
         "Content-Type": "application/json",
     }
@@ -26,6 +28,8 @@ def request_graphql(url: str, query: str, additional_headers: dict = None):
         headers.update(additional_headers)
 
     payload = {"query": query}
+    if variables is not None:
+        payload["variables"] = variables
 
     response = requests.post(url, headers=headers, json=payload)
     response.raise_for_status()
