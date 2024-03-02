@@ -1,5 +1,5 @@
+from datetime import datetime
 import re
-from time import sleep
 
 import pandas as pd
 from arbitrum_pipeline.common import export_to_file, request_graphql
@@ -16,7 +16,7 @@ def snapshot_proposals(context: AssetExecutionContext) -> Output[pd.DataFrame]:
 
     df = pd.DataFrame(response_data.get("proposals", []))
     context.log.info(df.head())
-    export_to_file(df, group, "proposals")
+    export_to_file(df, group, "raw_proposals")
 
     return Output(
         df,
@@ -34,6 +34,9 @@ def preprocessed_snapshot_proposals(
     df["forum_id"] = df["discussion"].apply(extract_forum_id)
     # Convert forum_id column to integers, handling NaN values(convert to -1) if necessary
     df["forum_id"] = df["forum_id"].fillna(-1).astype(int)
+    df["duration"] = df["end"] - df["start"]
+    df["created_date"] = pd.to_datetime(df["created"], unit="s", utc=True)
+
     context.log.info(df["forum_id"].head())
 
     export_to_file(df, group, "cleaned_proposals")
