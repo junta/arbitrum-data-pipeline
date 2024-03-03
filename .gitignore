@@ -181,3 +181,5 @@ scripts/.build
 
 # dbt .user files
 .user.yml
+
+/output_data

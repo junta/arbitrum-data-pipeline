@@ -2,8 +2,7 @@ from time import sleep
 import requests
 import pandas as pd
 from arbitrum_pipeline.common import export_to_file
-from dagster import asset, Output
-
+from dagster import asset, Output, AssetExecutionContext
 
 forum_base_url = "https://forum.arbitrum.foundation"
 group = "forum"
@@ -65,7 +64,7 @@ def forum_categories() -> Output[pd.DataFrame]:
 
 
 @asset(group_name="forum")
-def forum_users() -> pd.DataFrame:
+def forum_users() -> Output[pd.DataFrame]:
     url = forum_base_url + "/directory_items.json"
     users = []
     page = 1
@@ -97,11 +96,16 @@ def forum_users() -> pd.DataFrame:
 
     normalized_df = pd.concat([df, user_detail_df], axis=1)
     export_to_file(normalized_df, group, "users")
-    return df
+    return Output(
+        df,
+        metadata={
+            "Number of records": len(df),
+        },
+    )
 
 
 @asset(group_name="forum")
-def forum_posts() -> pd.DataFrame:
+def forum_posts(context: AssetExecutionContext) -> Output[pd.DataFrame]:
     url = forum_base_url + "/posts.json"
     posts = []
 
@@ -128,10 +132,15 @@ def forum_posts() -> pd.DataFrame:
         if not page_posts:
             break
         posts.extend(page_posts)
-        before_id = page_posts[-1]["id"]
+        before_id = page_posts[-1]["id"] - 1
         print("last post id: ", before_id)
         sleep(1)
 
     df = pd.DataFrame(posts)
     export_to_file(df, group, "posts")
-    return df
+    return Output(
+        df,
+        metadata={
+            "Number of records": len(df),
+        },
+    )

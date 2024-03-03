@@ -3,6 +3,7 @@ import pandas as pd
 import requests
 
 
+# TODO: convert to IO Manager
 def export_to_file(data: pd.DataFrame, group: str, filename: str) -> None:
     folder_name = "output_data/" + group
 

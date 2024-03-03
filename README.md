@@ -1,47 +1,63 @@
-# arbitrum_pipeline
+# Arbitrum Governance Data Pipeline
 
-This is a [Dagster](https://dagster.io/) project scaffolded with [`dagster project scaffold`](https://docs.dagster.io/getting-started/create-new-project).
+This is a [Dagster](https://dagster.io/) project gathering Arbitrum Governance-related data
 
-## Getting started
+Output files(CSV&Parquet) on 2024 March 3rd are available on Ocean Protocol
 
-First, install your Dagster code location as a Python package. By using the --editable flag, pip will install your Python package in ["editable mode"](https://pip.pypa.io/en/latest/topics/local-project-installs/#editable-installs) so that as you develop, local code changes will automatically apply.
+## Data Sources
 
+### 1. Forum 
+https://forum.arbitrum.foundation/
+
+Data format/description: https://docs.discourse.org
+- Topics
+- Posts
+- Categories
+- Users
+
+### 2. Snapshot
+https://snapshot.org/#/arbitrumfoundation.eth
+
+Data format/description: https://docs.snapshot.org/tools/api
+
+- Proposals
+- Votes
+
+Also pre-processing(extract forum_topic_id from raw URL, etc.) for following analytics work.
+
+### 3. Karma
+https://arbitrum.karmahq.xyz/
+
+Data format/description: https://documenter.getpostman.com/view/26295147/2s93RTPrfg#72d3c26b-d30b-4d42-9af9-9fa6bc63c0d5
+
+- Delegates
+
+### 4. Tally
+https://www.tally.xyz/gov/arbitrum
+
+Data format/description: https://docs.tally.xyz/user-guides/welcome
+
+They require API KEY, so (get it here)[https://docs.tally.xyz/user-guides/welcome#how-to-use-the-tally-api] and fill TALLY_API_KEY in .env file
+
+- Proposals
+
+
+## How to run and export the latest data
+With Docker
 ```bash
-pip install -e ".[dev]"
+docker build -t arbitrum-dagster .
+docker run -p 3000:3000 -d arbitrum-dagster
 ```
 
-Then, start the Dagster UI web server:
-
+Without Docker
 ```bash
+pip install -r requirements.txt
 dagster dev
 ```
 
 Open http://localhost:3000 with your browser to see the project.
 
-You can start writing assets in `arbitrum_pipeline/assets.py`. The assets are automatically loaded into the Dagster code location as you define them.
+Then, select Asset and click "Materialize"
 
-## Development
 
-### Adding new Python dependencies
-
-You can specify new Python dependencies in `setup.py`.
-
-### Unit testing
-
-Tests are in the `arbitrum_pipeline_tests` directory and you can run tests using `pytest`:
-
-```bash
-pytest arbitrum_pipeline_tests
-```
-
-### Schedules and sensors
-
-If you want to enable Dagster [Schedules](https://docs.dagster.io/concepts/partitions-schedules-sensors/schedules) or [Sensors](https://docs.dagster.io/concepts/partitions-schedules-sensors/sensors) for your jobs, the [Dagster Daemon](https://docs.dagster.io/deployment/dagster-daemon) process must be running. This is done automatically when you run `dagster dev`.
-
-Once your Dagster Daemon is running, you can start turning on schedules and sensors for your jobs.
-
-## Deploy on Dagster Cloud
-
-The easiest way to deploy your Dagster project is to use Dagster Cloud.
-
-Check out the [Dagster Cloud Documentation](https://docs.dagster.cloud) to learn more.
+Output files are exported under /output_data as CSV and Parquet format.

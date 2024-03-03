@@ -36,6 +36,8 @@ proposal_query = """
   governance(id: "eip155:42161:0xf07DeD9dC292157749B6Fd268E37DF6EA38395B9") {
     id
     chainId
+    active
+    name
     organization {
       id
       slug
@@ -44,13 +46,39 @@ proposal_query = """
       id
       title
       description
+      start {
+        ... on Block {
+          number
+          timestamp
+        }
+      }
+      end {
+        ... on Block {
+					number
+          timestamp
+        }
+      }
       eta
+      executable {
+        callDatas
+        signatures
+        targets
+        values
+      }
+      voteStats {
+        support
+        weight
+        votes
+        percent
+      }
       proposer {
         id
+        name
+        address
+        ens
+        bio
       }
-    }
-    active
-    name
+    }    
   }
 }
 """
