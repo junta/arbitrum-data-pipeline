@@ -21,12 +21,21 @@ def tally_proposals(context: AssetExecutionContext) -> Output[pd.DataFrame]:
 
     df = pd.DataFrame(response_data.get("governance", {}).get("proposals", []))
     context.log.info(df.head())
-    export_to_file(df, group, "proposals")
+
+    df_start = pd.json_normalize(df["start"])
+    df_start = df_start.rename(columns={"timestamp": "start_timestamp"})
+    df = df.drop("start", axis=1)
+    df_end = pd.json_normalize(df["end"])
+    df_end = df_end.rename(columns={"timestamp": "end_timestamp"})
+    df = df.drop("end", axis=1)
+
+    normalized_df = pd.concat([df, df_start, df_end], axis=1)
+    export_to_file(normalized_df, group, "proposals")
 
     return Output(
-        df,
+        normalized_df,
         metadata={
-            "Number of records": len(df),
+            "Number of records": len(normalized_df),
         },
     )
 
@@ -48,13 +57,11 @@ proposal_query = """
       description
       start {
         ... on Block {
-          number
           timestamp
         }
       }
       end {
         ... on Block {
-					number
           timestamp
         }
       }

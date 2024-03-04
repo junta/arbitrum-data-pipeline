@@ -31,13 +31,25 @@ def preprocessed_snapshot_proposals(
     context: AssetExecutionContext, snapshot_proposals: pd.DataFrame
 ) -> Output[pd.DataFrame]:
     df = snapshot_proposals
-    df["forum_id"] = df["discussion"].apply(extract_forum_id)
-    # Convert forum_id column to integers, handling NaN values(convert to -1) if necessary
-    df["forum_id"] = df["forum_id"].fillna(-1).astype(int)
+    df["forum_topic_id"] = df["discussion"].apply(extract_forum_topic_id)
+    # Convert forum_topic_id column to integers, handling NaN values(convert to -1) if necessary
+    df["forum_topic_id"] = df["forum_topic_id"].fillna(-1).astype(int)
+
     df["duration"] = df["end"] - df["start"]
     df["created_date"] = pd.to_datetime(df["created"], unit="s", utc=True)
 
-    context.log.info(df["forum_id"].head())
+    # Get the choice with the highest score
+    df["highest_score_index"] = df["scores"].apply(lambda x: x.index(max(x)))
+    df["selected_choice"] = df.apply(
+        lambda row: (
+            row["choices"][row["highest_score_index"]]
+            if len(row["choices"]) > row["highest_score_index"]
+            else None
+        ),
+        axis=1,
+    )
+
+    context.log.info(df["selected_choice"].head())
 
     export_to_file(df, group, "cleaned_proposals")
     return Output(
@@ -48,7 +60,7 @@ def preprocessed_snapshot_proposals(
     )
 
 
-def extract_forum_id(url):
+def extract_forum_topic_id(url):
     # Regular expression to match the Forum ID in the URL
     pattern = r"/(\d{5})/?"
     match = re.search(pattern, url)
@@ -63,6 +75,9 @@ def snapshot_votes(
     all_data = []
 
     proposal_ids = snapshot_proposals["id"].to_list()
+    # proposal_ids = [
+    #     "0x24344ab10eb905a4d7fa5885c6f681290e765a08a5f558ff6cfc5fedab42afb6"
+    # ]
     context.log.info(proposal_ids)
     for proposal_id in proposal_ids:
         created = 1
@@ -85,6 +100,8 @@ def snapshot_votes(
                 break
             df = pd.DataFrame(votes_data)
             df["proposal_id"] = proposal_id
+            # convert to str to avoid error
+            df["choice"] = df["choice"].apply(lambda x: str(x))
 
             all_data.append(df)
 
@@ -93,6 +110,8 @@ def snapshot_votes(
                 created = last_created
             else:
                 break
+
+    print(df["choice"].unique())
 
     if all_data:
         final_df = pd.concat(all_data, ignore_index=True)
