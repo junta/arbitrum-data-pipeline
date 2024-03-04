@@ -3,6 +3,7 @@
 This is a [Dagster](https://dagster.io/) project gathering Arbitrum Governance-related data
 
 Output files(CSV&Parquet) on 2024 March 3rd are available on Ocean Protocol
+https://market.oceanprotocol.com/asset/did:op:a2b08c506e0d857db49d9252a6eaadffa03364b9bc2bf1fdb2498014b82dece4
 
 ## Data Sources
 
@@ -37,7 +38,7 @@ https://www.tally.xyz/gov/arbitrum
 
 Data format/description: https://docs.tally.xyz/user-guides/welcome
 
-They require API KEY, so (get it here)[https://docs.tally.xyz/user-guides/welcome#how-to-use-the-tally-api] and fill TALLY_API_KEY in .env file
+They require API KEY, so [get it here](https://docs.tally.xyz/user-guides/welcome#how-to-use-the-tally-api) and fill TALLY_API_KEY in .env file
 
 - Proposals
 
@@ -59,5 +60,6 @@ Open http://localhost:3000 with your browser to see the project.
 
 Then, select Asset and click "Materialize"
 
+![Dagster Image](https://raw.githubusercontent.com/junta/arbitrum-data-pipeline/main/images/sample_dagster_lineage.png)
 
 Output files are exported under /output_data as CSV and Parquet format.
