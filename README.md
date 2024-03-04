@@ -24,7 +24,7 @@ Data format/description: https://docs.snapshot.org/tools/api
 - Proposals
 - Votes
 
-Also pre-processing(extract forum_topic_id from raw URL, etc.) for following analytics work.
+Also pre-processing(extract forum_topic_id from raw URL, derive selected choice as voting result etc.) for following analytics work.
 
 ### 3. Karma
 https://arbitrum.karmahq.xyz/
