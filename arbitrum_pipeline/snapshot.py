@@ -75,13 +75,13 @@ def snapshot_votes(
     all_data = []
 
     proposal_ids = snapshot_proposals["id"].to_list()
-    # proposal_ids = [
-    #     "0x24344ab10eb905a4d7fa5885c6f681290e765a08a5f558ff6cfc5fedab42afb6"
-    # ]
+
     context.log.info(proposal_ids)
     for proposal_id in proposal_ids:
         created = 1
         while True:
+            # skip parameter has limitation we can fetch only up to 5000 records.
+            # So, using created parameter and increment them to fetch all records.
             variables = {
                 "proposal_id": proposal_id,
                 "created": created,
