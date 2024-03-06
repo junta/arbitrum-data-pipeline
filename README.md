@@ -72,3 +72,6 @@ Then, select Asset and click "Materialize"
 Output files are exported under /output_data as CSV and Parquet format.
 
 ## Sample code to read and merge output files for analytics
+
+There is a sample Jupyter Notebook file
+https://github.com/junta/arbitrum-data-pipeline/blob/main/read_data.ipynb
