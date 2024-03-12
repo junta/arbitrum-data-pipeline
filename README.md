@@ -5,6 +5,9 @@ This is a [Dagster](https://dagster.io/) project gathering Arbitrum Governance-r
 Output files(CSV&Parquet) on 2024 March 3rd are available on Ocean Protocol
 https://market.oceanprotocol.com/asset/did:op:a2b08c506e0d857db49d9252a6eaadffa03364b9bc2bf1fdb2498014b82dece4
 
+Or download from Cloud Storage
+https://storage.googleapis.com/arbitrum_0xibuki/output_data.zip
+
 ## Data Sources
 
 ### 1. Forum
