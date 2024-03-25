@@ -18,7 +18,7 @@ def get_clustered_pca_delegates():
     return pd.read_csv("analytics/data/clustered_pca_delegates.csv")
 
 
-st.markdown("# Delegate clustering")
+st.markdown("# Delegates Clustering by Voting behavior")
 
 st.markdown("## Summary")
 
@@ -144,3 +144,8 @@ filtered_clustered_delegates_total = clustered_delegates_total[
 
 
 st.dataframe(filtered_clustered_delegates_total, height=400)
+
+st.markdown("#### Appendix")
+st.write(
+    "Jupyter notebook file and data is available at https://github.com/junta/arbitrum-data-pipeline/blob/main/analytics"
+)

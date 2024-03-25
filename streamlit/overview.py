@@ -2,10 +2,11 @@ import streamlit as st
 import pandas as pd
 
 st.markdown("# Arbitrum Governance Data Analytics")
-# st.sidebar.markdown("# Gitcoin Open Data Science Hackathon")
 
 st.markdown(
     """
+[Github Repo](https://github.com/junta/arbitrum-data-pipeline)
 
+[My DM is open](https://twitter.com/CryptoIbuki)
 """
 )
