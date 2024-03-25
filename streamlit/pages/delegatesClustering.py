@@ -24,8 +24,8 @@ st.markdown("## Summary")
 
 st.markdown(
     """
-    - Conducted KMode clustering for Arbitrum Delegates based on their voting behavior
-    - Idenfified common pattern for each cluster. In conclusion, delegating to Delegates in Cluster3 is recommended.(There is a list below) 
+    - Conducted K-Mode clustering for Arbitrum Delegates based on their voting behavior
+    - Idenfified common pattern for each cluster. In conclusion, Delegates in Cluster3 have partcipated in voting most actively. (There is a list below) 
     - Although Karma provides high quality information, choosing delegates remains a challenging task. Clustering can significantly contribute to comprehending delegate behavior and offering valuable insights to users.
 """
 )
@@ -55,10 +55,12 @@ st.markdown(
     "I've selected [K-Mode clustering](https://pypi.org/project/kmodes/) as clustering algorithm, and categorized delegates to 4 clusters. K-Mode clustering is similar to k-means clustering, but more suitable for categorical data"
 )
 
+clustered_pca_delegates = get_clustered_pca_delegates()
+
 st.markdown(
     "#### Visualize clustering result by decreasing to two dimensions by PCA(Principal component analysis)"
 )
-clustered_pca_delegates = get_clustered_pca_delegates()
+
 
 fig = px.scatter(
     clustered_pca_delegates,
@@ -117,13 +119,10 @@ fig = px.box(
 )
 st.plotly_chart(fig)
 
-average_by_cluster = (
-    clustered_delegates_total.groupby("cluster")[
-        ["totalForVotes", "totalAgainstVotes", "totalAbstainVotes", "totalNoVotes"]
-    ].mean()
-    # .apply(lambda x: x / 144)
-    # .applymap("{:.2%}".format)
-)
+average_by_cluster = clustered_delegates_total.groupby("cluster")[
+    ["totalForVotes", "totalAgainstVotes", "totalAbstainVotes", "totalNoVotes"]
+].mean()
+
 average_by_cluster["total"] = average_by_cluster.sum(axis=1)
 columns_to_divide = [
     "totalForVotes",
@@ -135,6 +134,17 @@ average_by_cluster[columns_to_divide] = (
     average_by_cluster[columns_to_divide].div(average_by_cluster["total"], axis=0) * 100
 ).applymap("{:.2f}%".format)
 average_by_cluster = average_by_cluster.drop(columns=["total"])
+
+average_by_cluster["NumberOfDelegates"] = [263, 34, 441, 74]
+average_by_cluster = average_by_cluster[
+    [
+        "NumberOfDelegates",
+        "totalForVotes",
+        "totalAgainstVotes",
+        "totalAbstainVotes",
+        "totalNoVotes",
+    ]
+]
 
 st.dataframe(average_by_cluster)
 
