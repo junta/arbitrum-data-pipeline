@@ -5,7 +5,7 @@ import plotly.express as px
 
 @st.cache_data
 def get_sentiment_by_proposal():
-    return pd.read_csv("data/sentiment_by_proposal.csv")
+    return pd.read_csv("analytics/data/sentiment_by_proposal.csv")
 
 
 st.markdown("# Sentiment Analysis on Forum post and voting behavior")

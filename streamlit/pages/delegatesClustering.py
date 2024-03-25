@@ -5,17 +5,17 @@ import plotly.express as px
 
 @st.cache_data
 def get_clustered_delegates_total():
-    return pd.read_csv("data/clustered_delegates_total.csv")
+    return pd.read_csv("analytics/data/clustered_delegates_total.csv")
 
 
 @st.cache_data
 def get_pivot_votes():
-    return pd.read_csv("data/pivot_votes.csv")
+    return pd.read_csv("analytics/data/pivot_votes.csv")
 
 
 @st.cache_data
 def get_clustered_pca_delegates():
-    return pd.read_csv("data/clustered_pca_delegates.csv")
+    return pd.read_csv("analytics/data/clustered_pca_delegates.csv")
 
 
 st.markdown("# Delegate clustering")
