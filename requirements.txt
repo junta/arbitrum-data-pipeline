@@ -3,3 +3,7 @@ pandas
 requests
 dagster
 dagster-webserver
+streamlit
+plotly
+statsmodels
+scipy
