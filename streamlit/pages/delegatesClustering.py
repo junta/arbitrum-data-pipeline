@@ -25,23 +25,24 @@ st.markdown("## Summary")
 st.markdown(
     """
     - Conducted KMode clustering for Arbitrum Delegates based on their voting behavior
-    - Idenfified common pattern for each cluster. In conclusion, delegating to cluster 3 Delegates is recommended.
+    - Idenfified common pattern for each cluster. In conclusion, delegating to Delegates in Cluster3 is recommended.(There is a list below) 
+    - Although Karma provides high quality information, choosing delegates remains a challenging task. Clustering can significantly contribute to comprehending delegate behavior and offering valuable insights to users.
 """
 )
 
 st.markdown("### Methodology")
 
-st.markdown("#### Used data")
+st.markdown("#### Data")
 st.markdown(
     """
-           Delegates: Delegators that are registered on Karma(1,421 Delegates)
+           **Delegates:** Delegates that are registered on [Karma](https://arbitrum.karmahq.xyz/)(1,421 Delegates)
            
-           Voting: Snapshot voting data. filter by voting for proposals that have three standard choices, "For", "Agains" and "Abstain"(126 proposals and 21,140 votes by Delegates) 
+           **Voting:** [Snapshot](https://snapshot.org/#/arbitrumfoundation.eth) voting data. filter by voting for proposals that have three standard choices, "For", "Agains" and "Abstain"(126 proposals and 21,140 votes by Delegates) 
 """
 )
 
-st.markdown("#### Pivot table(Delegates wallet addess X Voting choice)")
-st.markdown("None represents 'No Vote'")
+st.markdown("#### Pivot table(Voting behavior by Delegates)")
+st.markdown("*None represents 'No Vote'")
 
 pivot_votes = get_pivot_votes()
 pivot_votes.rename(columns={"publicAddress": "delegates address"}, inplace=True)
@@ -49,9 +50,9 @@ pivot_votes.rename(columns={"publicAddress": "delegates address"}, inplace=True)
 st.dataframe(pivot_votes, height=300)
 
 
-st.markdown("#### Run KMode Clustering")
+st.markdown("#### Run K-Mode Clustering")
 st.markdown(
-    "[K-Mode clustering](https://pypi.org/project/kmodes/) is similart to k-means clustering, but more suitable for categorical data"
+    "I've selected [K-Mode clustering](https://pypi.org/project/kmodes/) as clustering algorithm, and categorized delegates to 4 clusters. K-Mode clustering is similar to k-means clustering, but more suitable for categorical data"
 )
 
 st.markdown(
@@ -84,16 +85,36 @@ clustered_delegates_total = clustered_delegates_total[
     ]
 ]
 
-fig = px.box(clustered_delegates_total, x="cluster", y="totalForVotes")
+fig = px.box(
+    clustered_delegates_total,
+    x="cluster",
+    y="totalForVotes",
+    title="'For' votes by delegates cluster",
+)
 st.plotly_chart(fig)
 
-fig = px.box(clustered_delegates_total, x="cluster", y="totalAgainstVotes")
+fig = px.box(
+    clustered_delegates_total,
+    x="cluster",
+    y="totalAgainstVotes",
+    title="'Against' votes by delegates cluster",
+)
 st.plotly_chart(fig)
 
-fig = px.box(clustered_delegates_total, x="cluster", y="totalAbstainVotes")
+fig = px.box(
+    clustered_delegates_total,
+    x="cluster",
+    y="totalAbstainVotes",
+    title="'Abstain' votes by delegates cluster",
+)
 st.plotly_chart(fig)
 
-fig = px.box(clustered_delegates_total, x="cluster", y="totalNoVotes")
+fig = px.box(
+    clustered_delegates_total,
+    x="cluster",
+    y="totalNoVotes",
+    title="No votes by delegates cluster",
+)
 st.plotly_chart(fig)
 
 average_by_cluster = (
@@ -119,15 +140,15 @@ st.dataframe(average_by_cluster)
 
 st.markdown(
     """
-            Here we can see characteristics of the cluster.
+            Here, we can see characteristics of each cluster.
             
-            Cluster 0: rarely participates in voting
+            **Cluster 0:** Rarely participates in voting
             
-            Cluster 1: Voting for around half of the proposals much more "For" votes than "Against"
+            **Cluster 1:** Voting for around half of the proposals. Much more "For" votes than "Against"
             
-            Cluster 2: rarely participates in voting
+            **Cluster 2:** Voting more than cluster 0, but still less
             
-            Cluster 3: voting most actively. voting "Agaist" as much as "For"
+            **Cluster 3:** Voting most actively(Vote for more than 90% of proposals). Voting "Agaist" as much as "For"
 """
 )
 
